@@ -38,7 +38,7 @@ pipeline {
                 echo Testing SSH connection
                 plink -ssh -P 2222 -i %SSH_KEY% root@localhost "mkdir -p %APP_DIR% && chmod 755 %APP_DIR%"
                 pscp -P 2222 -i %SSH_KEY% target\\*.jar root@localhost:%APP_DIR%
-                plink -ssh -P 2222 -i %SSH_KEY% root@localhost "cd %APP_DIR% && pkill -f %JAR_NAME% || true && nohup java -jar %JAR_NAME% > %APP_DIR%/app.log 2>&1 &"
+                plink -ssh -P 2222 -i %SSH_KEY% root@localhost "cd %APP_DIR% && JAR_FILE=\\$(ls DemoApplication*.jar) && pkill -f \\${JAR_FILE} || true && nohup java -jar \\${JAR_FILE} > app.log 2>&1 &"
                 """
             }
         }
