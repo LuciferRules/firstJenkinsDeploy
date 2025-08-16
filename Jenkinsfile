@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     tools {
-            maven 'Maven 3.9.9'  // Must match Jenkins config
-            jdk 'jdk-17'         // Must match Jenkins config
-        }
+        maven 'Maven 3.9.9'  // Must match Jenkins config
+        jdk 'jdk-17'         // Must match Jenkins config
+    }
 
     environment {
         APP_DIR = "/srv/myapp"
@@ -15,15 +15,17 @@ pipeline {
         stage('Checkout') {
             steps {
                 git branch: 'master',
-                url: 'https://github.com/LuciferRules/firstJenkinsDeploy.git'
+                    url: 'https://github.com/LuciferRules/firstJenkinsDeploy.git'
             }
         }
 
         stage('Build') {
             steps {
                 tool name: 'jdk-17', type: 'jdk'
-                withEnv(["JAVA_HOME=${tool 'jdk-17'}"]) {
-                    bat 'mvn -v'  // Verify Maven and Java
+                withEnv(["JAVA_HOME=${tool 'jdk-17'}", "PATH+JAVA=${tool 'jdk-17'}\\bin"]) {
+                    bat 'echo JAVA_HOME is %JAVA_HOME%'
+                    bat 'java -version'
+                    bat 'mvn -v'
                     bat 'mvn clean package -DskipTests'
                 }
             }
