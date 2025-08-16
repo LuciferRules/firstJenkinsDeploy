@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    tools {
+        maven 'Maven 3.9.9'  // Matches the name in Global Tool Configuration
+        jdk 'jdk-17'         // Ensure JDK 17 is configured
+    }
+
     environment {
         APP_DIR = "/srv/myapp"
         JAR_NAME = "demoapp.jar"
