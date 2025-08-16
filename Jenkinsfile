@@ -9,7 +9,7 @@ pipeline {
     environment {
         APP_DIR = "/srv/myapp"
         JAR_NAME = "demoapp.jar"
-        SSH_KEY = "C:\\Windows\\System32\\config\\systemprofile\\.ssh\\id_rsa"
+        SSH_KEY = "C:\\Windows\\System32\\config\\systemprofile\\.ssh\\id_rsa.ppk"
     }
 
     stages {
@@ -36,8 +36,8 @@ pipeline {
             steps {
                 bat """
                 echo Testing SSH connection
-                pscp -P 2222 -i %SSH_KEY% -hostkey ssh-ed25519=255:SHA256:cFYdPDN+Al1+n9p5mN7XLcjVsCaoalh4HaaH0BkCkGg target\\*.jar root@localhost:%APP_DIR%\\%JAR_NAME%
-                plink -ssh -P 2222 -i %SSH_KEY% -hostkey ssh-ed25519=255:SHA256:cFYdPDN+Al1+n9p5mN7XLcjVsCaoalh4HaaH0BkCkGg root@localhost "cd %APP_DIR% && pkill -f %JAR_NAME% || true && nohup java -jar %JAR_NAME% > %APP_DIR%/app.log 2>&1 &"
+                pscp -P 2222 -i %SSH_KEY% target\\*.jar root@localhost:%APP_DIR%\\%JAR_NAME%
+                plink -ssh -P 2222 -i %SSH_KEY% root@localhost "cd %APP_DIR% && pkill -f %JAR_NAME% || true && nohup java -jar %JAR_NAME% > %APP_DIR%/app.log 2>&1 &"
                 """
             }
         }
