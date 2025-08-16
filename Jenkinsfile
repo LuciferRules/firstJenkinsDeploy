@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven-default'  // Default name for auto-installed Maven
-        jdk 'jdk'              // Default name for auto-installed JDK
+        maven 'Maven 3.9.9'  // Must match Jenkins config
+        jdk 'jdk-17'         // Must match Jenkins config
     }
 
     environment {
