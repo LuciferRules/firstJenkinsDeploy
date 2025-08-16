@@ -8,6 +8,7 @@ pipeline {
 
     environment {
         APP_DIR = "/srv/myapp"
+        JAR_NAME = "demoapp.jar"
         SSH_KEY = "C:\\Windows\\System32\\config\\systemprofile\\.ssh\\id_rsa.ppk"
     }
 
@@ -37,8 +38,8 @@ pipeline {
                     def result = bat returnStatus: true, script: """
                         echo Testing SSH connection
                         plink -ssh -P 2222 -i %SSH_KEY% root@localhost "mkdir -p %APP_DIR% && chmod 755 %APP_DIR%"
-                        pscp -P 2222 -i %SSH_KEY% target\\*.jar root@localhost:%APP_DIR%
-                        plink -ssh -P 2222 -i %SSH_KEY% root@localhost "cd %APP_DIR% && JAR_FILE=\\\$(ls *.jar) && pkill -f \\\${JAR_FILE} || true && nohup java -jar \\\${JAR_FILE} > app.log 2>&1 &"
+                        pscp -P 2222 -i %SSH_KEY% target\\*.jar root@localhost:%APP_DIR%/%JAR_NAME%
+                        plink -ssh -P 2222 -i %SSH_KEY% root@localhost "cd %APP_DIR% && pkill -f %JAR_NAME% || true && nohup java -jar %JAR_NAME% > %APP_DIR%/app.log 2>&1 &"
                     """
                     if (result != 0) {
                         error "Deploy stage failed with exit code ${result}"
