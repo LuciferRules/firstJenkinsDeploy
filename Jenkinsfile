@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven 3.9.9'  // Must match Jenkins config
-        jdk 'jdk-17'         // Must match Jenkins config
-    }
+            maven 'Maven 3.9.9'  // Must match Jenkins config
+            jdk 'jdk-17'         // Must match Jenkins config
+        }
 
     environment {
         APP_DIR = "/srv/myapp"
@@ -21,18 +21,20 @@ pipeline {
 
         stage('Build') {
             steps {
-                bat 'mvn -v'  // First verify Maven and Java are detected
-                bat 'mvn clean package -DskipTests'  // Use 'bat' for Windows
+                tool name: 'jdk-17', type: 'jdk'
+                withEnv(["JAVA_HOME=${tool 'jdk-17'}"]) {
+                    bat 'mvn -v'  // Verify Maven and Java
+                    bat 'mvn clean package -DskipTests'
+                }
             }
         }
 
         stage('Deploy') {
             steps {
                 sshagent(credentials: ['root']) {
-                    sh """
-                    scp -P 2222 target/*.jar root@localhost:${APP_DIR}/${JAR_NAME}
-                    ssh -p 2222 root@localhost 'cd ${APP_DIR} && \
-                    nohup java -jar ${JAR_NAME} > ${APP_DIR}/app.log 2>&1 &'
+                    bat """
+                    pscp -P 2222 target\\*.jar root@localhost:${APP_DIR}\\${JAR_NAME}
+                    plink -ssh -P 2222 root@localhost "cd ${APP_DIR} && nohup java -jar ${JAR_NAME} > ${APP_DIR}/app.log 2>&1 &"
                     """
                 }
             }
