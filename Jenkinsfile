@@ -26,7 +26,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sshagent(credentials: ['vm-root-ssh']) {
+                sshagent(credentials: ['root']) {
                     sh """
                     scp -P 2222 target/*.jar root@localhost:${APP_DIR}/${JAR_NAME}
                     ssh -p 2222 root@localhost 'cd ${APP_DIR} && \
