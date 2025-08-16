@@ -7,6 +7,8 @@ pipeline {
     }
 
     environment {
+        JAVA_HOME = 'C:\\Program Files\\Java\\jdk-17.0.12'  // Update to your Windows JDK path
+        PATH = "${env.JAVA_HOME}\\bin;${env.PATH}"
         APP_DIR = "/srv/myapp"
         JAR_NAME = "demoapp.jar"
     }
@@ -21,11 +23,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh """
-                export JAVA_HOME=/opt/jdk-17.0.2
-                export PATH=\$JAVA_HOME/bin:\$PATH
-                mvn clean package -DskipTests
-                """
+                bat 'mvn clean package -DskipTests'  // Use 'bat' for Windows
             }
         }
 
