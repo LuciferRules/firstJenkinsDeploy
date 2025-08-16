@@ -26,17 +26,18 @@ pipeline {
                     bat 'echo JAVA_HOME is %JAVA_HOME%'
                     bat 'java -version'
                     bat 'mvn -v'
-                    bat 'mvn clean package -DskipTests'
+                    bat 'mvn clean package -DskipTests -B'
                 }
             }
         }
 
         stage('Deploy') {
             steps {
-                sshagent(credentials: ['root']) {
+                sshagent(credentials: ['594d80bd-fa4e-44c6-b08d-cfae6c150aff']) {
                     bat """
+                    echo Testing SSH connection
                     pscp -P 2222 target\\*.jar root@localhost:${APP_DIR}\\${JAR_NAME}
-                    plink -ssh -P 2222 root@localhost "cd ${APP_DIR} && nohup java -jar ${JAR_NAME} > ${APP_DIR}/app.log 2>&1 &"
+                    plink -ssh -P 2222 root@localhost "cd ${APP_DIR} && pkill -f ${JAR_NAME} || true && nohup java -jar ${JAR_NAME} > ${APP_DIR}/app.log 2>&1 &"
                     """
                 }
             }
