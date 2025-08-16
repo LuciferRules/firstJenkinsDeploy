@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven 3.9.9'  // Matches the name in Global Tool Configuration
-        jdk 'jdk-17'         // Ensure JDK 17 is configured
+        maven 'Maven-default'  // Default name for auto-installed Maven
+        jdk 'jdk'              // Default name for auto-installed JDK
     }
 
     environment {
