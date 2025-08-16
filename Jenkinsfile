@@ -21,6 +21,7 @@ pipeline {
 
         stage('Build') {
             steps {
+                bat 'mvn -v'  // First verify Maven and Java are detected
                 bat 'mvn clean package -DskipTests'  // Use 'bat' for Windows
             }
         }
