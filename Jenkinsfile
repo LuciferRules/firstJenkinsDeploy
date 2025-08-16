@@ -9,6 +9,7 @@ pipeline {
     environment {
         APP_DIR = "/srv/myapp"
         JAR_NAME = "demoapp.jar"
+        SSH_KEY = "C:\\Windows\\System32\\config\\systemprofile\\.ssh\\id_rsa"  // private key that access to the HDP VM
     }
 
     stages {
@@ -33,13 +34,11 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sshagent(credentials: ['594d80bd-fa4e-44c6-b08d-cfae6c150aff']) {
-                    bat """
-                    echo Testing SSH connection
-                    pscp -P 2222 target\\*.jar root@localhost:${APP_DIR}\\${JAR_NAME}
-                    plink -ssh -P 2222 root@localhost "cd ${APP_DIR} && pkill -f ${JAR_NAME} || true && nohup java -jar ${JAR_NAME} > ${APP_DIR}/app.log 2>&1 &"
-                    """
-                }
+                bat """
+                echo Testing SSH connection
+                pscp -P 2222 -i %SSH_KEY% target\\*.jar root@localhost:%APP_DIR%\\%JAR_NAME%
+                plink -ssh -P 2222 -i %SSH_KEY% root@localhost "cd %APP_DIR% && pkill -f %JAR_NAME% || true && nohup java -jar %JAR_NAME% > %APP_DIR%/app.log 2>&1 &"
+                """
             }
         }
     }
