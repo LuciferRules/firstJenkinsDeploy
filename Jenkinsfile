@@ -8,7 +8,7 @@ pipeline {
 
     environment {
         APP_DIR = "/srv/myapp"
-        JAR_NAME = "demoapp.jar"
+        JAR_NAME = "DemoApplication-1.0-SNAPSHOT.jar"
         SSH_KEY = "C:\\Windows\\System32\\config\\systemprofile\\.ssh\\id_rsa.ppk"
     }
 
