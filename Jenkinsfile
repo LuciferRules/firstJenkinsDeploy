@@ -40,10 +40,10 @@ pipeline {
                         def SSH_ARG = "-i ${SSH_KEY} -o StrictHostKeyChecking=no -p 2222"
                         def result = sh returnStatus: true, script: """
                             echo "Testing SSH connection"
-                            ssh -i "${SSH_ARG}" ${SSH_USER}@localhost "mkdir -p ${APP_DIR} && chmod 755 ${APP_DIR}"
-                            scp -i "${SSH_ARG}" target/*.jar ${SSH_USER}@localhost:${APP_DIR}
-                            scp -i "${SSH_ARG}" bash/* ${SSH_USER}@localhost:${APP_DIR}
-                            ssh -i "${SSH_ARG}" ${SSH_USER}@localhost "source ${APP_DIR}/${BASH_APP}"
+                            ssh -i ${SSH_ARG} ${SSH_USER}@localhost "mkdir -p ${APP_DIR} && chmod 755 ${APP_DIR}"
+                            scp -i ${SSH_ARG} target/*.jar ${SSH_USER}@localhost:${APP_DIR}
+                            scp -i ${SSH_ARG} bash/* ${SSH_USER}@localhost:${APP_DIR}
+                            ssh -i ${SSH_ARG} ${SSH_USER}@localhost "source ${APP_DIR}/${BASH_APP}"
                         """
                         if (result != 0) {
                             error "Deploy stage failed with exit code ${result}"
@@ -60,9 +60,9 @@ pipeline {
                         def SSH_ARG = "-i ${SSH_KEY} -o StrictHostKeyChecking=no -p 2222"
                         def result = sh returnStatus: true, script: """
                             echo "Monitoring..."
-                            ssh -i "${SSH_ARG}" ${SSH_USER}@localhost "cat ${APP_DIR}/app.log"
+                            ssh -i ${SSH_ARG} ${SSH_USER}@localhost "cat ${APP_DIR}/app.log"
                             echo "Checking application endpoint..."
-                            ssh -i "${SSH_ARG}" ${SSH_USER}@localhost "curl http://localhost:8081"
+                            ssh -i ${SSH_ARG} ${SSH_USER}@localhost "curl http://localhost:8081"
                         """
                         if (result != 0) {
                             error "Monitor stage failed with exit code ${result}"
