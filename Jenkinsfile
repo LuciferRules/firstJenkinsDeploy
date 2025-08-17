@@ -9,7 +9,7 @@ pipeline {
     environment {
         APP_DIR = "/srv/myapp"
         JAR_NAME = "DemoApplication-1.0-SNAPSHOT.jar"
-        SSH_KEY = "/c/Windows/System32/config/systemprofile/.ssh/id_rsa.ppk"
+        SSH_KEY = "/c/Windows/System32/config/systemprofile/.ssh/id_rsa" // Use .ppk for Windows
     }
 
     stages {
