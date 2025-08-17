@@ -60,7 +60,7 @@ pipeline {
                             echo "Monitoring..."
                             ssh -i "${SSH_KEY}" -o StrictHostKeyChecking=no -p 2222 ${SSH_USER}@localhost "cat ${APP_DIR}/app.log"
                             echo "Checking application endpoint..."
-                            ssh -i "${SSH_KEY}" -o StrictHostKeyChecking=no -p 2222 ${SSH_USER}@localhost "curl http://localhost:8081"
+                            ssh -i "${SSH_KEY}" -o StrictHostKeyChecking=no -p 2222 ${SSH_USER}@localhost "curl -s http://localhost:8081 || echo 'Curl failed'"
                         """
                         if (result != 0) {
                             error "Monitor stage failed with exit code ${result}"
