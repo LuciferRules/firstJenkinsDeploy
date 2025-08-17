@@ -9,6 +9,7 @@ pipeline {
     environment {
         APP_DIR = "/srv/myapp"
         JAR_NAME = "DemoApplication-1.0-SNAPSHOT.jar"
+        BASH_APP = "DemoApplication-starter.sh"
 //         SSH_KEY = "/c/Windows/System32/config/systemprofile/.ssh/id_rsa.ppk" // Use .ppk for Windows
     }
 
@@ -40,7 +41,8 @@ pipeline {
                             echo "Testing SSH connection"
                             ssh -i "${SSH_KEY}" -o StrictHostKeyChecking=no -p 2222 ${SSH_USER}@localhost "mkdir -p ${APP_DIR} && chmod 755 ${APP_DIR}"
                             scp -i "${SSH_KEY}" -o StrictHostKeyChecking=no -P 2222 target/*.jar ${SSH_USER}@localhost:${APP_DIR}
-                            ssh -i "${SSH_KEY}" -o StrictHostKeyChecking=no -p 2222 ${SSH_USER}@localhost "cd ${APP_DIR} && pkill -f ${JAR_NAME} || true && nohup java -jar ${JAR_NAME} > ${APP_DIR}/app.log 2>&1 &"
+                            scp -i "${SSH_KEY}" -o StrictHostKeyChecking=no -P 2222 bash/* ${SSH_USER}@localhost:${APP_DIR}
+                            ssh -i "${SSH_KEY}" -o StrictHostKeyChecking=no -p 2222 ${SSH_USER}@localhost "source ${APP_DIR}/${BASH_APP}"
                         """
                         if (result != 0) {
                             error "Deploy stage failed with exit code ${result}"
