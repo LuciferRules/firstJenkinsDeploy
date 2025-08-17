@@ -9,7 +9,7 @@ pipeline {
     environment {
         APP_DIR = "/srv/myapp"
         JAR_NAME = "DemoApplication-1.0-SNAPSHOT.jar"
-        SSH_KEY = "/c/Windows/System32/config/systemprofile/.ssh/id_rsa" // Use .ppk for Windows
+//         SSH_KEY = "/c/Windows/System32/config/systemprofile/.ssh/id_rsa.ppk" // Use .ppk for Windows
     }
 
     stages {
@@ -34,15 +34,17 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                script {
-                    def result = sh returnStatus: true, script: """
-                        echo "Testing SSH connection"
-                        ssh -i "${SSH_KEY}" -p 2222 root@localhost "mkdir -p ${APP_DIR} && chmod 755 ${APP_DIR}"
-                        scp -i "${SSH_KEY}" -P 2222 target/*.jar root@localhost:${APP_DIR}
-                        ssh -i "${SSH_KEY}" -p 2222 root@localhost "cd ${APP_DIR} && pkill -f ${JAR_NAME} || true && nohup java -jar ${JAR_NAME} > ${APP_DIR}/app.log 2>&1 &"
-                    """
-                    if (result != 0) {
-                        error "Deploy stage failed with exit code ${result}"
+                withCredentials([sshUserPrivateKey(credentialsId: '594d80bd-fa4e-44c6-b08d-cfae6c150aff', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
+                    script {
+                        def result = sh returnStatus: true, script: """
+                            echo "Testing SSH connection"
+                            ssh -i "${SSH_KEY}" -o StrictHostKeyChecking=no -p 2222 ${SSH_USER}@localhost "mkdir -p ${APP_DIR} && chmod 755 ${APP_DIR}"
+                            scp -i "${SSH_KEY}" -o StrictHostKeyChecking=no -P 2222 target/*.jar ${SSH_USER}@localhost:${APP_DIR}
+                            ssh -i "${SSH_KEY}" -o StrictHostKeyChecking=no -p 2222 ${SSH_USER}@localhost "cd ${APP_DIR} && pkill -f ${JAR_NAME} || true && nohup java -jar ${JAR_NAME} > ${APP_DIR}/app.log 2>&1 &"
+                        """
+                        if (result != 0) {
+                            error "Deploy stage failed with exit code ${result}"
+                        }
                     }
                 }
             }
