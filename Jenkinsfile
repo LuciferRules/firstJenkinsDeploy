@@ -40,8 +40,8 @@ pipeline {
                         def result = sh returnStatus: true, script: """
                             echo "Testing SSH connection"
                             ssh -i "${SSH_KEY}" -o StrictHostKeyChecking=no -p 2222 ${SSH_USER}@localhost "mkdir -p ${APP_DIR} && chmod 755 ${APP_DIR}"
-                            scp -i "${SSH_KEY}" -o StrictHostKeyChecking=no -p 2222 target/*.jar ${SSH_USER}@localhost:${APP_DIR}
-                            scp -i "${SSH_KEY}" -o StrictHostKeyChecking=no -p 2222 bash/* ${SSH_USER}@localhost:${APP_DIR}
+                            scp -i "${SSH_KEY}" -o StrictHostKeyChecking=no -P 2222 target/*.jar ${SSH_USER}@localhost:${APP_DIR}
+                            scp -i "${SSH_KEY}" -o StrictHostKeyChecking=no -P 2222 bash/* ${SSH_USER}@localhost:${APP_DIR}
                             ssh -i "${SSH_KEY}" -o StrictHostKeyChecking=no -p 2222 ${SSH_USER}@localhost "source ${APP_DIR}/${BASH_APP}"
                         """
                         if (result != 0) {
